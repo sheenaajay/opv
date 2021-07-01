@@ -4,6 +4,7 @@ require 'puppet/resource_api'
 require 'puppet/resource_api/simple_provider'
 require 'ruby-pwsh'
 require 'retriable'
+require'pry'
 
 # Implementation for the check_powershell type using the Resource API.
 class Puppet::Provider::CheckPowershell::CheckPowershell
@@ -29,6 +30,7 @@ class Puppet::Provider::CheckPowershell::CheckPowershell
     Retriable.retriable(tries: should_hash[:retries], max_elapsed_time: should_hash[:request_timeout], max_interval: should_hash[:max_backoff],
 multiplier: should_hash[:exponential_backoff_base], on_retry: do_this_on_each_retry) do
       response = posh.execute(should_hash[:command])
+      binding.pry
       unless should_hash[:expected_exitcode].include? response[:exitcode].to_i
         raise Puppet::Error, "check_powershell exitcode check failed. The return exitcode '#{response[:exitcode]}' is not matching with the expected_exitcode '#{should_hash[:expected_exitcode]}'"
       end
