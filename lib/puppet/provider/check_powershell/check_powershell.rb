@@ -30,7 +30,7 @@ class Puppet::Provider::CheckPowershell::CheckPowershell
 multiplier: should_hash[:exponential_backoff_base], on_retry: do_this_on_each_retry) do
       response = posh.execute(should_hash[:command])
       unless should_hash[:expected_exitcode].include? response[:exitcode].to_i
-        raise Puppet::Error, "check_powershell exitcode check failed. The return exitcode '#{response[:exitcode]}' is not matching with the expected_exitcode '#{should_hash[:expected_exitcode]}.to_s'"
+        raise Puppet::Error, "check_powershell exitcode check failed. The return exitcode '#{response[:exitcode]}' is not matching with the expected_exitcode '#{should_hash[:expected_exitcode]}'"
       end
       context.debug("The return exitcode '#{response[:exitcode]}' is matching with the expected_exitcode '#{should_hash[:expected_exitcode]}'")
       unless response[:stdout].match(should_hash[:output_matcher])
