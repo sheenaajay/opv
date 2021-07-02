@@ -72,6 +72,23 @@ RSpec.describe Puppet::Provider::CheckPowershell::CheckPowershell do
     end
   end
 
+  describe 'insync?(context, name, attribute_name, is_hash, should_hash) output_matcher not matching' do
+    it 'processes resources' do
+      allow(Pwsh::Manager).to receive(:powershell_path).and_return('C:\\Windows')
+      allow(Pwsh::Manager).to receive(:powershell_args).and_return(['-NoProfile'])
+      allow(Pwsh::Manager).to receive(:instance).with(any_args).and_return(posh)
+      allow(posh).to receive(:execute).with(invalid_command).and_return(nil)
+      allow(context).to receive(:debug)
+      allow(context).to receive(:debug)
+      expect(context).to receive(:debug).with('Checking whether foo is up-to-date')
+      expect(context).to receive(:debug).with("The return exitcode '2' is matching with the expected_exitcode '[2]'")
+      expect(context).to receive(:info).with(%r{1 tries})
+      expect(context).to receive(:info).with(%r{2 tries})
+      expect(context).to receive(:info).with(%r{3 tries})
+      expect { provider.insync?(context, 'foo', 'foo', invalid_hash, invalid_hash) }.to raise_error(%r{check_powershell output check failed.})
+    end
+  end
+
   describe 'insync?(context, name, attribute_name, is_hash, should_hash) with Retry' do
     it 'processes resources' do
       allow(Pwsh::Manager).to receive(:powershell_path).and_return('C:\\Windows')
