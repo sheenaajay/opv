@@ -16,7 +16,7 @@ class Puppet::Provider::CheckPowershell::CheckPowershell
 
   def ps_manager
     debug_output = Puppet::Util::Log.level == :debug
-    Pwsh::Manager.instance(Pwsh::Manager.powershell_path, Pwsh::Manager.powershell_args, debug: debug_output, pipe_timeout: pipe_timeout)
+    Pwsh::Manager.instance(Pwsh::Manager.powershell_path, Pwsh::Manager.powershell_args)
   end
 
   # Update the check_powershell provider to use the above attributes to execute up to retries number of times
