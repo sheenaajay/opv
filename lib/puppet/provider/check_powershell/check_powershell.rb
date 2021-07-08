@@ -54,8 +54,7 @@ class Puppet::Provider::CheckPowershell::CheckPowershell
     Retriable.retriable(tries: should_hash[:retries], max_elapsed_time: should_hash[:request_timeout], max_interval: should_hash[:max_backoff],
 multiplier: should_hash[:exponential_backoff_base], on_retry: do_this_on_each_retry) do
 
-      begin
-        result     = ps_manager.execute(should_hash[:command])
+        result     = ps_manager.execute("try { #{should_hash[:command]}; exit $LASTEXITCODE } catch { write-error $_ ; exit 1 }")
         stdout     = result[:stdout]
         native_out = result[:native_stdout]
         stderr     = result[:stderr]
@@ -70,11 +69,6 @@ multiplier: should_hash[:exponential_backoff_base], on_retry: do_this_on_each_re
         output = Puppet::Util::Execution::ProcessOutput.new(stdout.to_s + native_out.to_s, exit_code)
 
         #binding.pry
-      rescue Exception => exception
-        #binding.pry
-        puts exception.message
-        puts exception.backtrace.inspect
-      end
       unless should_hash[:expected_exitcode].include? output[exit_code].to_i
         raise Puppet::Error, "check_powershell exitcode check failed. The return exitcode '#{output[exit_code]}' is not matching with the expected_exitcode '#{should_hash[:expected_exitcode]}'"
       end
