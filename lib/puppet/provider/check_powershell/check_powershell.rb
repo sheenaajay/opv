@@ -33,7 +33,7 @@ class Puppet::Provider::CheckPowershell::CheckPowershell
 
   def ps_manager
     unless Pwsh::Manager.windows_powershell_supported?
-      upgrade_message
+      #upgrade_message
       debug_output = Puppet::Util::Log.level == :debug
       Pwsh::Manager.instance(Pwsh::Manager.powershell_path, Pwsh::Manager.powershell_args)
     end
